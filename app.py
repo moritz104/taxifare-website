@@ -1,5 +1,6 @@
 import streamlit as st
 import datetime
+import pandas as pd
 import requests
 
 '''
@@ -29,14 +30,25 @@ st.markdown("""
     ### Please enter the following information:
 """)
 
-pickup_lon = st.text_input(label="pickup longitude")
-pickup_lat = st.text_input(label="pickup latitude")
-dropoff_lon = st.text_input(label="dropoff longitude")
-dropoff_lat = st.text_input(label="dropoff latitude")
-passenger_count = st.number_input(label="Passenger count", min_value=1, max_value=10)
+pickup_lon = st.text_input("pickup longitude", '23')
+pickup_lat = st.text_input("pickup latitude", '23')
+dropoff_lon = st.text_input("dropoff longitude", '24')
+dropoff_lat = st.text_input("dropoff latitude", '24')
+passenger_count = st.number_input("Passenger count", min_value=1, max_value=10)
 date = st.date_input("What day do you need a ride?", datetime.date(2019, 7, 6), format="YYYY-MM-DD" )
 time = st.time_input("What time?", datetime.time(8, 45))
 button = st.button("Get fare", type="primary")
+
+#@st.cache
+def get_map_data():
+
+    return pd.DataFrame({
+        "lat" : [float(pickup_lat), float(dropoff_lat)],
+        "lon" : [float(pickup_lon), float(dropoff_lon)]
+    })
+
+df = get_map_data()
+st.map(df, latitude = "lat", longitude = "lon", size = 50, zoom = 6)
 
 para_dict = {"pickup_datetime": f'{date} {time}',
              "pickup_longitude": pickup_lon,
